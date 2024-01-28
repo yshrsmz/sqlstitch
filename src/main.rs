@@ -1,26 +1,21 @@
 mod sqlstitch;
+mod commands;
 
 use std::{
-    env,
     fs::File,
     io::{self, Read},
 };
 
+use clap::Parser;
+use commands::Cli;
 use sqlstitch::{extract_foreign_key_constraints, sort_tables_by_foreign_key_constraints, RelatedTables};
 
 fn main() -> io::Result<()> {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 3 {
-        eprintln!("Please provide multiple files to read from.");
-        std::process::exit(1);
-    }
-
-    let (_, files) = args.split_at(1);
+    let cli = Cli::parse();
 
     let mut tables: Vec<RelatedTables> = Vec::new();
 
-    for file in files {
+    for file in cli.files {
         // get content of file
         let mut content = String::new();
         let mut file = File::open(file)?;
