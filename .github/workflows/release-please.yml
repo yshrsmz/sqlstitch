@@ -20,6 +20,26 @@ jobs:
           private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
 
       - uses: google-github-actions/release-please-action@v4
+        id: releaes-please
         with:
           token: ${{ steps.app-token.outputs.token }}
           release-type: rust
+          skip-github-release: true
+
+      - name: Tagging
+        if: "${{ startsWith('chore(main): release', github.event.head_commit.message) }}"
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const m = '${{ github.event.head_commit.message }}'.match(/^chore\(main\): release (\d+\.\d+.\d+) \(#\d+\)$/)
+            if (!m || m.length < 2) {
+              return
+            }
+            const version = m[1]
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${version}`,
+              sha: context.sha
+            })
