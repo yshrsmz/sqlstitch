@@ -174,7 +174,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlstich"
+name = "sqlstitch"
 version = "0.1.0"
 dependencies = [
  "clap",
