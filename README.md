@@ -26,7 +26,7 @@ $ sqlstich <FILES>...
 For example, if you have a directory named schema containing your SQL files, you can sort all of them and write the output to a new SQL file like this:
 
 ```shell
-$ sqlstich schema/*.sql > schema.sql
+$ sqlstich schema/*.sql > sorted_schema.sql
 ```
 
 This will create a new file named sorted_schema.sql containing the sorted SQL statements.
