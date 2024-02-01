@@ -17,6 +17,9 @@ fn main() -> io::Result<()> {
 
     for file in cli.files {
         // get content of file
+        if cli.verbose {
+            println!("Reading file: {}", file);
+        }
         let mut content = String::new();
         let mut file = File::open(file)?;
         file.read_to_string(&mut content)?;

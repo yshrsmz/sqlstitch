@@ -12,7 +12,13 @@ pub struct RelatedTables {
 
 pub fn extract_foreign_key_constraints(sql: String) -> RelatedTables {
     let dialect = dialect::GenericDialect {};
-    let ast = Parser::parse_sql(&dialect, &sql).unwrap();
+    let ast_result = Parser::parse_sql(&dialect, &sql);
+    let ast = match ast_result {
+        Ok(ast) => ast,
+        Err(e) => {
+            panic!("Error parsing SQL: {}", e);
+        }
+    };
 
     let mut related_tables = Vec::new();
     let mut name =String::new();
@@ -27,7 +33,9 @@ pub fn extract_foreign_key_constraints(sql: String) -> RelatedTables {
                 if let sqlparser::ast::TableConstraint::ForeignKey { foreign_table, .. } =
                     constraint
                 {
-                    related_tables.push(foreign_table.to_string());
+                    foreign_table.0.iter().for_each(|s| {
+                        related_tables.push(s.value.to_string());
+                    });
                 }
             }
         }
