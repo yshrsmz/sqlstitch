@@ -20,7 +20,13 @@ pub fn sort_statements_by_relations(statements: &Vec<StatementRelations>) -> Res
         }
     }
 
-    let sorted_indices = toposort(&graph, None).unwrap();
+    let result = toposort(&graph, None);
+    let sorted_indices = match result {
+        Ok(sorted_indices) => sorted_indices,
+        Err(cycle) => {
+            return Err(format!("Circular dependency detected: {:?}", graph.node_weight(cycle.node_id()).unwrap()));
+        }
+    };
 
     let sorted_statements = sorted_indices
         .iter()
@@ -37,6 +43,26 @@ mod tests {
 
     mod sort_statements_by_relations {
         use super::*;
+
+        #[test]
+        fn should_return_error_for_circular_dependency(){
+            let statements = vec![
+                StatementRelations {
+                    statement: "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)".to_string(),
+                    name: "users".to_string(),
+                    related_statements: vec!["posts".to_string()],
+                },
+                StatementRelations {
+                    statement: "CREATE TABLE posts (id INTEGER PRIMARY KEY, user_id INTEGER, FOREIGN KEY(user_id) REFERENCES users(id))".to_string(),
+                    name: "posts".to_string(),
+                    related_statements: vec!["users".to_string()],
+                },
+            ];
+
+            let result = sort_statements_by_relations(&statements);
+            assert!(result.is_err());
+            assert_eq!(result.err().unwrap(), "Circular dependency detected: StatementRelations { statement: \"CREATE TABLE posts (id INTEGER PRIMARY KEY, user_id INTEGER, FOREIGN KEY(user_id) REFERENCES users(id))\", name: \"posts\", related_statements: [\"users\"] }");
+        }
 
         #[test]
         fn should_sort_statements_by_relations() {
