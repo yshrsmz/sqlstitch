@@ -31,6 +31,15 @@ $ sqlstich schema/*.sql > sorted_schema.sql
 
 This will create a new file named sorted_schema.sql containing the sorted SQL statements.
 
+## Supported SQL Statements
+
+Currently, `sqlstitch` supports the following SQL statements:
+
+- `CREATE TABLE`: This statement is used to create a new table in a database.
+- `CREATE INDEX`: This statement is used to create an index on one or more columns of a table.
+
+Please note that other SQL statements present in the provided files will be ignored by `sqlstitch` in its current version. We are actively working on expanding the list of supported SQL statements. Stay tuned for updates!
+
 ## Installation
 
 To install `sqlstitch`, please refer to the [releases](https://github.com/yshrsmz/sqlstitch/releases) page. You'll find the latest version of sqlstitch there, along with instructions on how to install it.
