@@ -29,6 +29,7 @@ jobs:
       - name: Check head commit message
         run: |
           echo "HEAD commit message: '${{ github.event.head_commit.message }}'"
+          echo "RESULT: ${{ startsWith('chore(main): release', github.event.head_commit.message) }}"
 
       - name: Tagging
         if: "${{ startsWith('chore(main): release', github.event.head_commit.message) }}"
