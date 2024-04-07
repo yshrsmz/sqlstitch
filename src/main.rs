@@ -1,4 +1,5 @@
-mod sqlstitch;
+mod extractor;
+mod sorter;
 mod commands;
 
 use std::{
@@ -8,12 +9,13 @@ use std::{
 
 use clap::Parser;
 use commands::Cli;
-use sqlstitch::{extract_foreign_key_constraints, sort_tables_by_foreign_key_constraints, RelatedTables};
+use extractor::{extract_statements_and_relations, StatementRelations};
+use sorter::sort_statements_by_relations;
 
 fn main() -> io::Result<()> {
     let cli = Cli::parse();
 
-    let mut tables: Vec<RelatedTables> = Vec::new();
+    let mut statements: Vec<StatementRelations> = Vec::new();
 
     for file in cli.files {
         // get content of file
@@ -24,16 +26,18 @@ fn main() -> io::Result<()> {
         let mut file = File::open(file)?;
         file.read_to_string(&mut content)?;
 
-        let result = extract_foreign_key_constraints(content);
-
-        tables.push(result);
+        let stmts = extract_statements_and_relations(content.clone(), cli.verbose);
+        statements.extend(stmts);
     }
 
-    let sorted_tables = sort_tables_by_foreign_key_constraints(&tables);
+    let result = sort_statements_by_relations(&statements);
 
-    for table in sorted_tables {
-        let result = tables.iter().find(|t| t.name == table).unwrap();
-        println!("{}", result.source);
+    if result.is_err() {
+        panic!("{}", result.err().unwrap());
+    }
+
+    for statement in result.unwrap() {
+        println!("{}", statement.statement);
     }
 
     Ok(())
