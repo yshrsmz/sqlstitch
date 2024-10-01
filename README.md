@@ -48,6 +48,13 @@ To install `sqlstitch`, please refer to the [releases](https://github.com/yshrsm
 
 If you'd like to contribute to the development of sqlstitch, we'd love to have your help! You can start by checking out our open issues. If you find one that you'd like to work on, feel free to fork the repository and submit a pull request.
 
+### Update cargo-dist
+
+```shell
+cargo install cargo-dist --locked
+cargo dist init
+```
+
 
 ## License
 
