@@ -23,6 +23,7 @@ fn force_table_comment_as_with_eq(statement: Statement) -> Statement {
                 Some(ref comment_def) => {
                     match comment_def {
                         // force table comment as ComentDef::WithEq
+                        // https://github.com/apache/datafusion-sqlparser-rs/issues/1452
                         sqlparser::ast::CommentDef::WithoutEq(comment) => {
                             Some(CommentDef::WithEq(comment.clone()))
                         }
