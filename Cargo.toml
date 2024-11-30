@@ -9,7 +9,7 @@ license = "Apache-2.0"
 
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
-sqlparser = "0.51.0"
+sqlparser = "0.52.0"
 petgraph = "0.6.4"
 
 # The profile that 'cargo dist' will build with
