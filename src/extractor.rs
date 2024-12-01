@@ -1,6 +1,6 @@
 use sqlparser::{
     ast::{
-        helpers::stmt_create_table::CreateTableBuilder, CommentDef, CreateIndex, CreateTable,
+        CreateIndex, CreateTable,
         Statement,
     },
     dialect,
@@ -13,34 +13,6 @@ pub struct StatementRelations {
     pub statement: String,
     pub name: String,
     pub related_statements: Vec<String>,
-}
-
-fn force_table_comment_as_with_eq(statement: Statement) -> Statement {
-    match statement {
-        Statement::CreateTable(_) => {
-            let mut builder = CreateTableBuilder::try_from(statement).unwrap();
-            let comment = match builder.comment {
-                Some(ref comment_def) => {
-                    match comment_def {
-                        // force table comment as ComentDef::WithEq
-                        // https://github.com/apache/datafusion-sqlparser-rs/issues/1452
-                        sqlparser::ast::CommentDef::WithoutEq(comment) => {
-                            Some(CommentDef::WithEq(comment.clone()))
-                        }
-                        _ => Some(comment_def.clone()),
-                    }
-                }
-                None => None,
-            };
-            builder = builder.comment(comment);
-
-            let new_statement = builder.build();
-            return new_statement;
-        }
-        _ => {
-            return statement;
-        }
-    }
 }
 
 pub fn extract_statements_and_relations(sql: String, verbose: bool) -> Vec<StatementRelations> {
@@ -57,12 +29,11 @@ pub fn extract_statements_and_relations(sql: String, verbose: bool) -> Vec<State
     let mut statements: Vec<StatementRelations> = Vec::new();
 
     for statement in ast {
-        let new_statement = force_table_comment_as_with_eq(statement);
-        let source = new_statement.to_string() + ";";
+        let source = statement.to_string() + ";";
         if verbose {
             println!("Source: {}", source);
         }
-        match new_statement {
+        match statement {
             Statement::CreateTable(CreateTable {
                 name, constraints, ..
             }) => {
@@ -100,7 +71,7 @@ pub fn extract_statements_and_relations(sql: String, verbose: bool) -> Vec<State
                 statements.push(stmt);
             }
             _ => {
-                panic!("This statement is not supported: {:?}", new_statement);
+                panic!("This statement is not supported: {:?}", statement);
             }
         }
     }
@@ -172,6 +143,38 @@ mod tests {
             assert_eq!(statements[1].related_statements[0], "users");
             assert_eq!(statements[2].related_statements.len(), 1);
             assert_eq!(statements[2].related_statements[0], "posts");
+        }
+
+        #[test]
+        fn should_respect_comment_with_eq() {
+            let sql = r#"
+                CREATE TABLE users (
+                    id INT PRIMARY KEY,
+                    name TEXT NOT NULL
+                ) COMMENT = 'This is a table comment';
+            "#;
+
+            let statements = extract_statements_and_relations(sql.to_string(), false);
+            assert_eq!(
+                statements[0].statement,
+                "CREATE TABLE users (id INT PRIMARY KEY, name TEXT NOT NULL) COMMENT = 'This is a table comment';"
+            );
+        }
+
+        #[test]
+        fn should_respect_comment_without_eq() {
+            let sql = r#"
+                CREATE TABLE users (
+                    id INT PRIMARY KEY,
+                    name TEXT NOT NULL
+                ) COMMENT 'This is a table comment';
+            "#;
+
+            let statements = extract_statements_and_relations(sql.to_string(), false);
+            assert_eq!(
+                statements[0].statement,
+                "CREATE TABLE users (id INT PRIMARY KEY, name TEXT NOT NULL) COMMENT 'This is a table comment';"
+            );
         }
     }
 }
