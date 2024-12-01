@@ -1,6 +1,6 @@
 [package]
 name = "sqlstitch"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 repository = "https://github.com/yshrsmz/sqlstitch"
 license = "Apache-2.0"
