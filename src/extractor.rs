@@ -162,7 +162,7 @@ mod tests {
         }
 
         #[test]
-        fn should_expect_comment_without_eq() {
+        fn should_respect_comment_without_eq() {
             let sql = r#"
                 CREATE TABLE users (
                     id INT PRIMARY KEY,
