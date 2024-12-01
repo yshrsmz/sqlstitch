@@ -24,4 +24,14 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           release-type: rust
-          skip-github-release: false
+          skip-github-release: true
+
+      - name: Tagging with git command
+        if: steps.releaes-please.outputs.release_created == 'true'
+        run: |
+          echo "Tagging version: v${{ steps.releaes-please.outputs.major }}.${{ steps.releaes-please.outputs.minor }}.${{ steps.releaes-please.outputs.patch }}"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git remote add gh-token "https://${{ steps.app-token.outputs.token }}@github.com/googleapis/release-please-action.git"
+          git tag v${{ steps.releaes-please.outputs.major }}.${{ steps.releaes-please.outputs.minor }}.${{ steps.releaes-please.outputs.patch }}
+          git push origin v${{ steps.releaes-please.outputs.major }}.${{ steps.releaes-please.outputs.minor }}.${{ steps.releaes-please.outputs.patch }}
