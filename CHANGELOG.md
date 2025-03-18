@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.3](https://github.com/yshrsmz/sqlstitch/compare/v0.2.2...v0.2.3) (2025-03-18)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to v4.5.27 ([#56](https://github.com/yshrsmz/sqlstitch/issues/56)) ([aaf9e0c](https://github.com/yshrsmz/sqlstitch/commit/aaf9e0c6614069a7ec1e2eb8d9a867f89423f12f))
+* **deps:** update rust crate clap to v4.5.31 ([#62](https://github.com/yshrsmz/sqlstitch/issues/62)) ([146a687](https://github.com/yshrsmz/sqlstitch/commit/146a68762bdcce2aa596464950f72dce5dbfe952))
+* **deps:** update rust crate clap to v4.5.32 ([#64](https://github.com/yshrsmz/sqlstitch/issues/64)) ([ce7a66b](https://github.com/yshrsmz/sqlstitch/commit/ce7a66bd791424dd3d06658c70fd443f11bec299))
+* **deps:** update rust crate petgraph to 0.7.0 ([#59](https://github.com/yshrsmz/sqlstitch/issues/59)) ([f18054a](https://github.com/yshrsmz/sqlstitch/commit/f18054a5a90ae5ba9e1ffb1932e5fc3eaa89aae5))
+* **deps:** update rust crate sqlparser to 0.54.0 ([#57](https://github.com/yshrsmz/sqlstitch/issues/57)) ([6d8b402](https://github.com/yshrsmz/sqlstitch/commit/6d8b402e34c68ff46b748bbe2e78be5de74b8999))
+
 ## [0.2.2](https://github.com/yshrsmz/sqlstitch/compare/v0.2.1...v0.2.2) (2024-12-01)
 
 
