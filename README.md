@@ -52,7 +52,7 @@ If you'd like to contribute to the development of sqlstitch, we'd love to have y
 
 ```shell
 cargo install cargo-dist --locked
-cargo dist init
+dist init
 ```
 
 
