@@ -16,3 +16,5 @@ target/
 *.pdb
 
 schema/
+
+.vscode/settings.json
