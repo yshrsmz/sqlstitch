@@ -1,0 +1,20 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "./.claude/statusline.sh"
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "extraKnownMarketplaces": {
+    "yshrsmz-cc-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "yshrsmz/cc-plugins"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "github@yshrsmz-cc-plugins": true
+  }
+}
