@@ -42,15 +42,16 @@ pub fn extract_statements_and_relations(sql: String, verbose: bool) -> Vec<State
                     statement: source,
                     // name can be `database_name.table_name`
                     // last identifier should be the actual table name
-                    name: name.0.last().unwrap().value.to_string(),
+                    name: name.0.last().unwrap().as_ident().unwrap().value.to_string(),
                     related_statements: Vec::new(),
                 };
                 for constraint in constraints {
-                    if let sqlparser::ast::TableConstraint::ForeignKey { foreign_table, .. } =
+                    if let sqlparser::ast::TableConstraint::ForeignKey(fk) =
                         constraint
                     {
-                        foreign_table.0.iter().for_each(|s| {
-                            stmt.related_statements.push(s.value.to_string());
+                        fk.foreign_table.0.iter().for_each(|s| {
+                            stmt.related_statements
+                                .push(s.as_ident().unwrap().value.to_string());
                         });
                     }
                 }
@@ -76,7 +77,7 @@ pub fn extract_statements_and_relations(sql: String, verbose: bool) -> Vec<State
         }
     }
 
-    return statements;
+    statements
 }
 
 #[cfg(test)]
