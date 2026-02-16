@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/yshrsmz/sqlstitch/compare/v0.2.3...v0.2.4) (2026-02-16)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate sqlparser to 0.61.0 ([#63](https://github.com/yshrsmz/sqlstitch/issues/63)) ([6359286](https://github.com/yshrsmz/sqlstitch/commit/6359286f3b113eba50acf8b0b421885b4b30717b))
+
 ## [0.2.3](https://github.com/yshrsmz/sqlstitch/compare/v0.2.2...v0.2.3) (2026-02-16)
 
 
