@@ -20,18 +20,34 @@ jobs:
           private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
 
       - uses: googleapis/release-please-action@v4
-        id: releaes-please
+        id: release-please
         with:
           token: ${{ steps.app-token.outputs.token }}
           release-type: rust
           skip-github-release: true
 
-      - name: Tagging with git command
-        if: steps.releaes-please.outputs.release_created == 'true'
+      - name: Detect release version from commit
+        id: detect-release
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          echo "Tagging version: v${{ steps.releaes-please.outputs.major }}.${{ steps.releaes-please.outputs.minor }}.${{ steps.releaes-please.outputs.patch }}"
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git remote add gh-token "https://${{ steps.app-token.outputs.token }}@github.com/googleapis/release-please-action.git"
-          git tag v${{ steps.releaes-please.outputs.major }}.${{ steps.releaes-please.outputs.minor }}.${{ steps.releaes-please.outputs.patch }}
-          git push origin v${{ steps.releaes-please.outputs.major }}.${{ steps.releaes-please.outputs.minor }}.${{ steps.releaes-please.outputs.patch }}
+          FIRST_LINE=$(echo "$COMMIT_MSG" | head -1)
+          if [[ "$FIRST_LINE" =~ ^chore\(main\):\ release\ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            TAG_NAME="v${BASH_REMATCH[1]}"
+            echo "tag_name=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+            echo "release_created=true" >> "$GITHUB_OUTPUT"
+            echo "Detected release version: ${TAG_NAME}"
+          else
+            echo "Not a release commit"
+          fi
+
+      - name: Create tag
+        if: steps.detect-release.outputs.release_created == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TAG_NAME: ${{ steps.detect-release.outputs.tag_name }}
+        run: |
+          echo "Creating tag: ${TAG_NAME}"
+          gh api "repos/${{ github.repository }}/git/refs" \
+            -f "ref=refs/tags/${TAG_NAME}" \
+            -f "sha=${{ github.sha }}"
