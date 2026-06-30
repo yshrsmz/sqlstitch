@@ -2,7 +2,8 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "reviewers": ["yshrsmz"],
   "extends": [
-    "config:best-practices"
+    "github>yshrsmz/renovate-config",
+    "github>yshrsmz/renovate-config:github-actions"
   ],
   "packageRules": [
     {
